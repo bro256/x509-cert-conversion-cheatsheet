@@ -67,3 +67,34 @@ openssl crl2pkcs7 -nocrl -certfile cert.pem -certfile intermediate.pem -certfile
 **Windows certutil**
 > Not directly supported by a single certutil command. In practice this is done via the Certificates MMC snap-in (`certmgr.msc`) → Export → "Cryptographic Message Syntax Standard - PKCS #7", or scripted via PowerShell's `Export-Certificate`/CMS cmdlets rather than certutil.
 
+
+
+---
+
+### PKCS#7 → PEM Certificates
+
+**OpenSSL**
+```bash
+openssl pkcs7 -in cert.p7b -print_certs -out certs.pem
+```
+> Extracts all certificates from the PKCS#7 container as individual `-----BEGIN CERTIFICATE-----` PEM blocks.
+
+**Windows certutil**
+> There is no direct certutil equivalent that extracts all certificates as individual PEM files.
+```cmd
+certutil -dump cert.p7b
+```
+> `certutil -dump` displays the certificate(s) contained in the PKCS#7 container for inspection, but it does not export them as PEM certificates. Use OpenSSL when you need PEM-encoded certificates.
+
+**keytool**
+> Not applicable.
+
+**Python (cryptography, v3.1+)**
+```python
+from cryptography.hazmat.primitives.serialization import pkcs7, Encoding
+
+certs = pkcs7.load_der_pkcs7_certificates(open("cert.p7b", "rb").read())
+with open("certs.pem", "wb") as f:
+    for cert in certs:
+        f.write(cert.public_bytes(Encoding.PEM))
+```
