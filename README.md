@@ -47,3 +47,23 @@ certutil -encode cert.der cert.pem
 ```
 > `certutil -encode` base64-encodes binary input and wraps it with PEM headers - correct direction for DER→PEM.
 
+
+---
+
+### PEM/DER → PKCS#7 (.p7b)
+
+PKCS#7 holds certs/chains only - no private key.
+
+**OpenSSL - single cert**
+```bash
+openssl crl2pkcs7 -nocrl -certfile cert.pem -out cert.p7b
+```
+
+**OpenSSL - full chain**
+```bash
+openssl crl2pkcs7 -nocrl -certfile cert.pem -certfile intermediate.pem -certfile root.pem -out chain.p7b
+```
+
+**Windows certutil**
+> Not directly supported by a single certutil command. In practice this is done via the Certificates MMC snap-in (`certmgr.msc`) → Export → "Cryptographic Message Syntax Standard - PKCS #7", or scripted via PowerShell's `Export-Certificate`/CMS cmdlets rather than certutil.
+
