@@ -86,3 +86,22 @@ certutil -dump cert.p7b
 ```
 
 > `certutil -dump` displays the certificate(s) contained in the PKCS#7 container for inspection, but it does not export them as PEM certificates. Use OpenSSL when you need PEM-encoded certificates.
+
+---
+
+### PEM → PKCS#12 (.p12/.pfx)
+
+**OpenSSL - certificate + private key**
+```bash
+openssl pkcs12 -export -in cert.pem -inkey key.pem -out cert.p12 -name "my-cert"
+```
+
+**OpenSSL — certificate + private key + chain**
+```bash
+openssl pkcs12 -export -in cert.pem -inkey key.pem -certfile chain.pem -out cert.p12 -name "my-cert"
+```
+> `chain.pem` typically contains one or more intermediate CA certificates (and optionally the root CA). The private key specified by `-inkey` must match the certificate.
+
+**Windows certutil**
+
+> Not directly supported for building a PKCS#12 from a standalone PEM certificate and private key. `certutil -mergePFX` only combines existing PKCS#12 (PFX) files. The typical Windows-native approach is to import the certificate and private key into the certificate store, then use PowerShell's `Export-PfxCertificate`. For direct PEM certificate + key → PKCS#12 conversion, OpenSSL is the standard tool, including on Windows.
