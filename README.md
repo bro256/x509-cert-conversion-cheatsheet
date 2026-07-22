@@ -14,3 +14,19 @@ A practical, single-page reference for X.509 certificate formats (PEM, DER, PKCS
 | **JKS** | Proprietary binary, password-protected | Java-specific keystore (certs + keys) | `.jks` |
 
 **PEM/DER are encodings** (how bytes are represented). **PKCS#7/PKCS#12/JKS are containers** (what's bundled together). A `.crt` file could be PEM or DER inside - the extension doesn't guarantee it.
+
+
+## Conversions
+
+### PEM → DER
+
+**OpenSSL**
+```bash
+openssl x509 -in cert.pem -outform der -out cert.der
+```
+
+**Windows certutil**
+```cmd
+certutil -decode cert.pem cert.der
+```
+> `certutil -decode` strips the `-----BEGIN/END-----` markers and base64-decodes the body — this is the correct direction for PEM→DER.
