@@ -29,4 +29,21 @@ openssl x509 -in cert.pem -outform der -out cert.der
 ```cmd
 certutil -decode cert.pem cert.der
 ```
-> `certutil -decode` strips the `-----BEGIN/END-----` markers and base64-decodes the body — this is the correct direction for PEM→DER.
+> `certutil -decode` strips the `-----BEGIN/END-----` markers and base64-decodes the body - this is the correct direction for PEM→DER.
+
+
+---
+
+### DER → PEM
+
+**OpenSSL**
+```bash
+openssl x509 -in cert.der -inform der -out cert.pem -outform pem
+```
+
+**Windows certutil**
+```cmd
+certutil -encode cert.der cert.pem
+```
+> `certutil -encode` base64-encodes binary input and wraps it with PEM headers - correct direction for DER→PEM.
+
