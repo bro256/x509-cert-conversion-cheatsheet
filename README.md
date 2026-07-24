@@ -177,3 +177,13 @@ openssl rsa -in pkcs8.pem -out pkcs1.pem
 **Windows certutil**
 > Not applicable — Windows CryptoAPI/CNG manages private keys independently of PEM container formats and does not provide a direct PKCS#1 ↔ PKCS#8 conversion workflow. This distinction is mainly relevant in OpenSSL and PEM-based environments.
 
+
+---
+
+### PKCS#12 ↔ JKS
+
+**OpenSSL**
+> Not applicable — OpenSSL has no JKS support; JKS is a Java-specific keystore format.
+
+**Windows certutil**
+> Not applicable — JKS isn't used by Windows CryptoAPI/CNG; it's exclusively a Java Keystore format.
