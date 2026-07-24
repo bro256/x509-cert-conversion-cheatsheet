@@ -1,5 +1,8 @@
 # X.509 Certificate Formats & Conversion Guide
 
+> **Status: Draft / Work in progress**  
+> This reference is currently under development. Examples and recommendations may be updated as additional validation and testing are completed.
+
 A practical, single-page reference for X.509 certificate formats (PEM, DER, PKCS#7, PKCS#12, PKCS#8, JKS) and how to convert between them.
 
 ## Format Overview
