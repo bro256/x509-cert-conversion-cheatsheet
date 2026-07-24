@@ -105,3 +105,38 @@ openssl pkcs12 -export -in cert.pem -inkey key.pem -certfile chain.pem -out cert
 **Windows certutil**
 
 > Not directly supported for building a PKCS#12 from a standalone PEM certificate and private key. `certutil -mergePFX` only combines existing PKCS#12 (PFX) files. The typical Windows-native approach is to import the certificate and private key into the certificate store, then use PowerShell's `Export-PfxCertificate`. For direct PEM certificate + key → PKCS#12 conversion, OpenSSL is the standard tool, including on Windows.
+
+---
+
+### PKCS#12 → PEM
+
+**OpenSSL - everything (cert + key + chain) into one file**
+```bash
+openssl pkcs12 -in cert.p12 -out bundle.pem -nodes
+```
+> Exports the private key, leaf certificate, and CA certificates (if present) into a single PEM file. Remove -nodes (or use -noenc in newer OpenSSL versions) to keep the private key encrypted.
+
+**OpenSSL - certificate only**
+```bash
+openssl pkcs12 -in cert.p12 -clcerts -nokeys -out cert.pem
+```
+> Extracts the leaf certificate and excludes the private key and CA certificates.
+
+**OpenSSL - private key only**
+```bash
+openssl pkcs12 -in cert.p12 -nocerts -nodes -out key.pem
+```
+> Extracts the private key. Remove -nodes (or use -noenc in newer OpenSSL versions) to keep the exported private key encrypted.
+
+**OpenSSL - CA chain only (excludes leaf certificate)**
+```bash
+openssl pkcs12 -in cert.p12 -cacerts -nokeys -out chain.pem
+```
+> Extracts only CA certificates stored in the PKCS#12 container. The leaf certificate is excluded.
+
+
+**Windows certutil**
+```cmd
+certutil -exportPFX -p "yourpassword" My "CertCommonNameOrSerial" cert.p12
+```
+> certutil -exportPFX exports a certificate and private key already stored in the Windows certificate store (for example, the My store). It does not decode or convert an existing standalone .p12/.pfx file into PEM. For standalone PKCS#12 → PEM conversion, use OpenSSL.
