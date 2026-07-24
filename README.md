@@ -148,3 +148,32 @@ openssl pkcs12 -legacy -in cert.p12 -cacerts -nokeys -out chain.pem
 certutil -exportPFX -p "yourpassword" My "CertCommonNameOrSerial" cert.p12
 ```
 > certutil -exportPFX exports a certificate and private key already stored in the Windows certificate store (for example, the My store). It does not decode or convert an existing standalone .p12/.pfx file into PEM. For standalone PKCS#12 → PEM conversion, use OpenSSL.
+
+
+---
+
+### PKCS#1 ↔ PKCS#8 (private key)
+
+PKCS#1 (`BEGIN RSA PRIVATE KEY`) is RSA-only, legacy.
+PKCS#8 (`-----BEGIN PRIVATE KEY-----` or `-----BEGIN ENCRYPTED PRIVATE KEY-----`) is a standard algorithm-independent private key format that supports RSA, EC, Ed25519, and other algorithms. Modern tools and libraries commonly prefer PKCS#8.
+
+**OpenSSL - PKCS#1 → PKCS#8, unencrypted**
+```bash
+openssl pkcs8 -topk8 -nocrypt -in rsa_pkcs1.pem -out pkcs8.pem
+```
+
+**OpenSSL - PKCS#1 → PKCS#8, encrypted output**
+```bash
+openssl pkcs8 -topk8 -in rsa_pkcs1.pem -out pkcs8_encrypted.pem
+```
+>Creates an encrypted PKCS#8 private key (-----BEGIN ENCRYPTED PRIVATE KEY-----) protected with a passphrase.
+
+**OpenSSL - PKCS#8 → PKCS#1** (RSA only)
+```bash
+openssl rsa -in pkcs8.pem -out pkcs1.pem
+```
+>Converts an RSA private key from PKCS#8 to traditional PKCS#1 format (-----BEGIN RSA PRIVATE KEY-----). Not applicable to EC, Ed25519, or other non-RSA keys.
+
+**Windows certutil**
+> Not applicable — Windows CryptoAPI/CNG manages private keys independently of PEM container formats and does not provide a direct PKCS#1 ↔ PKCS#8 conversion workflow. This distinction is mainly relevant in OpenSSL and PEM-based environments.
+
