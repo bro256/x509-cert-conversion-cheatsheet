@@ -137,6 +137,11 @@ openssl pkcs12 -in cert.p12 -cacerts -nokeys -out chain.pem
 ```
 > Extracts only CA certificates stored in the PKCS#12 container. The leaf certificate is excluded.
 
+**OpenSSL 3.x - legacy PKCS#12 files**
+```
+openssl pkcs12 -legacy -in cert.p12 -cacerts -nokeys -out chain.pem
+```
+>OpenSSL 3.x disables some legacy PKCS#12 algorithms by default. If the .p12/.pfx file was created by older tools (for example, older Windows certificate exports) and uses algorithms such as RC2 or 3DES, OpenSSL may fail with an algorithm error. Add -legacy to enable support for legacy PKCS#12 algorithms.
 
 **Windows certutil**
 ```cmd
