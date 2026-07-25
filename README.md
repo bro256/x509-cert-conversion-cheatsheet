@@ -5,6 +5,23 @@
 
 A practical, single-page reference for X.509 certificate formats (PEM, DER, PKCS#7, PKCS#12, PKCS#8, JKS) and how to convert between them.
 
+
+## Table of Contents
+
+- [Format Overview](#format-overview)
+- [Conversions](#conversions)
+  - [PEM → DER](#pem--der)
+  - [DER → PEM](#der--pem)
+  - [PEM Certificates → PKCS#7 (.p7b)](#pem-certificates--pkcs7-p7b)
+  - [PKCS#7 → PEM Certificates](#pkcs7--pem-certificates)
+  - [PEM → PKCS#12 (.p12/.pfx)](#pem--pkcs12-p12pfx)
+  - [PKCS#12 → PEM](#pkcs12--pem)
+  - [PKCS#1 ↔ PKCS#8 (private key)](#pkcs1--pkcs8-private-key)
+  - [PKCS#12 ↔ JKS](#pkcs12--jks)
+- [Building Certificate Chains / Bundles](#building-certificate-chains--bundles)
+
+
+
 ## Format Overview
 
 | Format | Encoding | Contains | Typical extension |
