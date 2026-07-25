@@ -237,6 +237,24 @@ certutil -exportPFX -p "yourpassword" My "CertCommonNameOrSerial" cert.p12
 ```
 > certutil -exportPFX exports a certificate and private key already stored in the Windows certificate store (for example, the My store). It does not decode or convert an existing standalone .p12/.pfx file into PEM. For standalone PKCS#12 → PEM conversion, use OpenSSL.
 
+**Python (cryptography, v2.5+)**
+```python
+from cryptography.hazmat.primitives.serialization import (
+    pkcs12,
+    Encoding,
+    PrivateFormat,
+    NoEncryption,
+)
+
+private_key, cert, additional_certs = pkcs12.load_key_and_certificates(
+    open("cert.p12", "rb").read(),
+    password=b"yourpassword",
+)
+
+with open("bundle.pem", "wb") as f:
+    f.write(private_key.private_bytes(Encoding.PEM, PrivateFormat.PKCS8, NoEncryption()))
+    f.write(cert.public_bytes(Encoding.PEM))
+```
 
 ---
 
