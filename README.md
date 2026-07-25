@@ -50,6 +50,18 @@ certutil -decode cert.pem cert.der
 ```
 > `certutil -decode` Base64-decodes a PEM/Base64-encoded certificate to its binary DER representation. PEM headers are ignored during decoding.
 
+**Python (cryptography)**
+```python
+from cryptography import x509
+from cryptography.hazmat.primitives import serialization
+
+with open("cert.pem", "rb") as f:
+    cert = x509.load_pem_x509_certificate(f.read())
+
+with open("cert.der", "wb") as f:
+    f.write(cert.public_bytes(serialization.Encoding.DER))
+```
+
 ---
 
 ### DER → PEM
