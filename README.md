@@ -183,7 +183,32 @@ openssl rsa -in pkcs8.pem -out pkcs1.pem
 ### PKCS#12 ↔ JKS
 
 **OpenSSL**
-> Not applicable — OpenSSL has no JKS support; JKS is a Java-specific keystore format.
+> Not applicable - OpenSSL has no JKS support; JKS is a Java-specific keystore format.
 
 **Windows certutil**
-> Not applicable — JKS isn't used by Windows CryptoAPI/CNG; it's exclusively a Java Keystore format.
+> Not applicable - JKS isn't used by Windows CryptoAPI/CNG; it's exclusively a Java Keystore format.
+
+
+---
+
+## Building Certificate Chains / Bundles
+
+Order matters: **leaf → intermediate(s) → root**, in that sequence, in one file.
+
+```bash
+cat leaf.pem intermediate.pem root.pem > fullchain.pem
+```
+
+For servers (nginx/Apache), the root is usually **omitted** - clients already trust it via their OS/browser trust store:
+
+```bash
+cat leaf.pem intermediate.pem > fullchain.pem
+```
+
+For a P12 that includes the chain:
+
+```bash
+openssl pkcs12 -export -in leaf.pem -inkey key.pem -certfile intermediate.pem -out bundle.p12
+```
+
+---
