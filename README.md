@@ -176,6 +176,27 @@ openssl pkcs12 -export -in cert.pem -inkey key.pem -certfile chain.pem -out cert
 
 > Not directly supported for building a PKCS#12 from a standalone PEM certificate and private key. `certutil -mergePFX` only combines existing PKCS#12 (PFX) files. The typical Windows-native approach is to import the certificate and private key into the certificate store, then use PowerShell's `Export-PfxCertificate`. For direct PEM certificate + key → PKCS#12 conversion, OpenSSL is the standard tool, including on Windows.
 
+**Python (cryptography, v3.1+)**
+```python
+from cryptography import x509
+from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.primitives.serialization import pkcs12, NoEncryption
+
+cert = x509.load_pem_x509_certificate(open("cert.pem", "rb").read())
+key = serialization.load_pem_private_key(open("key.pem", "rb").read(), password=None)
+
+data = pkcs12.serialize_key_and_certificates(
+    name=b"my-cert",
+    key=key,
+    cert=cert,
+    cas=None,
+    encryption_algorithm=NoEncryption(),
+)
+
+open("cert.p12", "wb").write(data)
+```
+
+
 ---
 
 ### PKCS#12 → PEM
