@@ -77,6 +77,18 @@ certutil -encode cert.der cert.pem
 ```
 > `certutil -encode` Base64-encodes the DER certificate and wraps it in standard `-----BEGIN CERTIFICATE-----` / `-----END CERTIFICATE-----` PEM headers.
 
+**Python (cryptography)**
+```python
+from cryptography import x509
+from cryptography.hazmat.primitives import serialization
+
+with open("cert.der", "rb") as f:
+    cert = x509.load_der_x509_certificate(f.read())
+
+with open("cert.pem", "wb") as f:
+    f.write(cert.public_bytes(serialization.Encoding.PEM))
+```
+
 ---
 
 ### PEM Certificates → PKCS#7 (.p7b)
@@ -98,6 +110,20 @@ openssl crl2pkcs7 -nocrl -certfile cert.pem -certfile intermediate.pem -certfile
 **Windows certutil**
 
 > Not directly supported by a single `certutil` command. In practice, this is done via the Certificates MMC snap-in (`certmgr.msc`) → **Export** → **Cryptographic Message Syntax Standard – PKCS #7**, or scripted via PowerShell's `Export-Certificate`/CMS cmdlets rather than `certutil`.
+
+**Python (cryptography, v37+)**
+```python
+from cryptography import x509
+from cryptography.hazmat.primitives.serialization import pkcs7, Encoding
+
+certs = []
+for filename in ("cert.pem", "intermediate.pem"):
+    with open(filename, "rb") as f:
+        certs.append(x509.load_pem_x509_certificate(f.read()))
+
+with open("chain.p7b", "wb") as f:
+    f.write(pkcs7.serialize_certificates(certs, Encoding.DER))
+```
 
 ---
 
