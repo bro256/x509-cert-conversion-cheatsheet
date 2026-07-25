@@ -145,6 +145,18 @@ certutil -dump cert.p7b
 
 > `certutil -dump` displays the certificate(s) contained in the PKCS#7 container for inspection, but it does not export them as PEM certificates. Use OpenSSL when you need PEM-encoded certificates.
 
+**Python (cryptography, v3.1+)**
+```python
+from cryptography.hazmat.primitives.serialization import pkcs7, Encoding
+
+with open("cert.p7b", "rb") as f:
+    certs = pkcs7.load_der_pkcs7_certificates(f.read())
+
+with open("certs.pem", "wb") as f:
+    for cert in certs:
+        f.write(cert.public_bytes(Encoding.PEM))
+```
+
 ---
 
 ### PEM → PKCS#12 (.p12/.pfx)
