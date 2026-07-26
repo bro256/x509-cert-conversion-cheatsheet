@@ -315,6 +315,8 @@ with open("pkcs8.pem", "wb") as f:
 **Windows certutil**
 > Not applicable - JKS isn't used by Windows CryptoAPI/CNG; it's exclusively a Java Keystore format.
 
+**Python**
+> Not applicable - JKS is a Java-specific keystore format and is not supported by the cryptography library.
 
 ---
 
