@@ -1,13 +1,13 @@
 # X.509 Certificate Formats & Conversion Guide
 
-> **Status: Draft / Work in progress**  
+> **Status: Draft / Work in progress**
 > This reference is currently under development. Examples and recommendations may be updated as additional validation and testing are completed.
 
 A practical, single-page reference for X.509 certificate formats (PEM, DER, PKCS#7, PKCS#12, PKCS#8, JKS) and how to convert between them.
 
-
 ## Table of Contents
 
+- [Conversion Matrix](#conversion-matrix)
 - [Format Overview](#format-overview)
 - [Conversions](#conversions)
   - [PEM → DER](#pem--der)
@@ -20,7 +20,21 @@ A practical, single-page reference for X.509 certificate formats (PEM, DER, PKCS
   - [PKCS#12 ↔ JKS](#pkcs12--jks)
 - [Building Certificate Chains / Bundles](#building-certificate-chains--bundles)
 
+---
 
+## Conversion Matrix
+
+| From ↓ \ To → | PEM | DER | P7B | P12/PFX | JKS |
+|---|---|---|---|---|---|
+| **PEM** | — | [→](#pem--der) | [→](#pem-certificates--pkcs7-p7b) | [→](#pem--pkcs12-p12pfx) | via P12 |
+| **DER** | [→](#der--pem) | — | via PEM | via PEM | via P12 |
+| **P7B** | [→](#pkcs7--pem-certificates) | via PEM | — | via PEM | via P12 |
+| **P12/PFX** | [→](#pkcs12--pem) | via PEM | via PEM | — | [→](#pkcs12--jks) |
+| **JKS** | via P12 | via P12 | via P12 | [→](#pkcs12--jks) | — |
+
+> Note: PKCS#12 ↔ JKS conversion currently has no tool example populated below — that section is a placeholder pending a reliable, verified method.
+
+---
 
 ## Format Overview
 
@@ -196,7 +210,6 @@ data = pkcs12.serialize_key_and_certificates(
 open("cert.p12", "wb").write(data)
 ```
 
-
 ---
 
 ### PKCS#12 → PEM
@@ -226,10 +239,10 @@ openssl pkcs12 -in cert.p12 -cacerts -nokeys -out chain.pem
 > Extracts only CA certificates stored in the PKCS#12 container. The leaf certificate is excluded.
 
 **OpenSSL 3.x - legacy PKCS#12 files**
-```
+```bash
 openssl pkcs12 -legacy -in cert.p12 -cacerts -nokeys -out chain.pem
 ```
->OpenSSL 3.x disables some legacy PKCS#12 algorithms by default. If the .p12/.pfx file was created by older tools (for example, older Windows certificate exports) and uses algorithms such as RC2 or 3DES, OpenSSL may fail with an algorithm error. Add -legacy to enable support for legacy PKCS#12 algorithms.
+> OpenSSL 3.x disables some legacy PKCS#12 algorithms by default. If the .p12/.pfx file was created by older tools (for example, older Windows certificate exports) and uses algorithms such as RC2 or 3DES, OpenSSL may fail with an algorithm error. Add -legacy to enable support for legacy PKCS#12 algorithms.
 
 **Windows certutil**
 ```cmd
@@ -272,13 +285,13 @@ openssl pkcs8 -topk8 -nocrypt -in rsa_pkcs1.pem -out pkcs8.pem
 ```bash
 openssl pkcs8 -topk8 -in rsa_pkcs1.pem -out pkcs8_encrypted.pem
 ```
->Creates an encrypted PKCS#8 private key (-----BEGIN ENCRYPTED PRIVATE KEY-----) protected with a passphrase.
+> Creates an encrypted PKCS#8 private key (-----BEGIN ENCRYPTED PRIVATE KEY-----) protected with a passphrase.
 
 **OpenSSL - PKCS#8 → PKCS#1** (RSA only)
 ```bash
 openssl rsa -in pkcs8.pem -out pkcs1.pem
 ```
->Converts an RSA private key from PKCS#8 to traditional PKCS#1 format (-----BEGIN RSA PRIVATE KEY-----). Not applicable to EC, Ed25519, or other non-RSA keys.
+> Converts an RSA private key from PKCS#8 to traditional PKCS#1 format (-----BEGIN RSA PRIVATE KEY-----). Not applicable to EC, Ed25519, or other non-RSA keys.
 
 **Windows certutil**
 > Not applicable — Windows CryptoAPI/CNG manages private keys independently of PEM container formats and does not provide a direct PKCS#1 ↔ PKCS#8 conversion workflow. This distinction is mainly relevant in OpenSSL and PEM-based environments.
