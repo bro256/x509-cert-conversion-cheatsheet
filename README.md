@@ -283,6 +283,27 @@ openssl rsa -in pkcs8.pem -out pkcs1.pem
 **Windows certutil**
 > Not applicable — Windows CryptoAPI/CNG manages private keys independently of PEM container formats and does not provide a direct PKCS#1 ↔ PKCS#8 conversion workflow. This distinction is mainly relevant in OpenSSL and PEM-based environments.
 
+**Python (cryptography)**
+```python
+from cryptography.hazmat.primitives.serialization import (
+    load_pem_private_key,
+    Encoding,
+    PrivateFormat,
+    NoEncryption,
+)
+
+with open("rsa_pkcs1.pem", "rb") as f:
+    key = load_pem_private_key(f.read(), password=None)
+
+with open("pkcs8.pem", "wb") as f:
+    f.write(
+        key.private_bytes(
+            Encoding.PEM,
+            PrivateFormat.PKCS8,
+            NoEncryption(),
+        )
+    )
+```
 
 ---
 
